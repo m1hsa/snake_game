@@ -16,17 +16,23 @@ impl Rng {
     }
 }
 
-pub fn show_pg(head: &(u8, u8), food: &(u8, u8), score: &u16) {
+pub fn show_pg(head: &(u8, u8), body: &Vec<(u8, u8)>, food: &(u8, u8), score: &u16) {
     let mut pg = format!("score: {}\n", score);
     for y in 0..W - 1 {
-        for x in 0..H - 1 {
+        'x: for x in 0..H - 1 {
             if head.0 == x + 1 && head.1 == y + 1 {
-                pg.push_str("I ");
+                pg.push_str("# ");
                 continue;
             }
             if food.0 == x + 1 && food.1 == y + 1 {
                 pg.push_str("F ");
                 continue;
+            }
+            for i in body {
+                if i.0 == x + 1 && i.1 == y + 1 {
+                    pg.push_str("o ");
+                    continue 'x;
+                }
             }
             pg.push_str(". ");
         }
@@ -63,4 +69,13 @@ pub fn handle_keyboard(stdin: &mut io::Stdin, quit: &mut bool, head: &mut (u8, u
         113 => *quit = true, // 'q'
         _ => (),
     }
+}
+
+pub fn check_game_over(body: &Vec<(u8, u8)>, head: &(u8, u8)) -> bool {
+    for i in body {
+        if head == i {
+            return true
+        }
+    }
+    false
 }

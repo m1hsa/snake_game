@@ -13,21 +13,33 @@ fn main() {
     let mut head = (W / 2, H / 2);
     let mut food = (r.rand(), r.rand());
 
+    let mut body: Vec<(u8, u8)> = vec![(0, 0)];
+
     check_borders(&mut food);
 
     while !quit {
+        body.push(head);
+        body.remove(0);
+
         handle_keyboard(&mut stdin, &mut quit, &mut head);
 
         check_borders(&mut head);
 
+        if check_game_over(&body, &head) {
+            break;
+        }
+
         if head == food {
             score += 1;
+            body.push(head);
             food = (r.rand(), r.rand());
             check_borders(&mut food);
         }
 
-        show_pg(&head, &food, &score);
+        show_pg(&head, &body, &food, &score);
     }
+
+    println!("Game over! Score: {}", score);
 
     c::remove_term(term);
 }
