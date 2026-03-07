@@ -29,9 +29,9 @@ fn main() {
 
         if head == food {
             score += 1;
-            body.push(head);
             food = (r.rand(), r.rand());
             check_borders(&mut food);
+            body.insert(0, head);
         }
 
         show_pg(&head, &body, &food, &score);
