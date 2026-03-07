@@ -31,11 +31,11 @@ fn translate_key(key: u8) -> char {
     }
 }
 
-fn show_pg(player_head: &(u8, u8), food: &(u8, u8)) {
+fn show_pg(player_head: &(u8, u8), food: &(u8, u8), score: &u16) {
     // let mut pg = String::from(format!("{:?}\n",player_head));
-    let mut pg = String::new();
-    for y in 0..W {
-        for x in 0..H {
+    let mut pg = format!("{}\n", score);
+    for y in 0..W-1 {
+        for x in 0..H-1 {
             if player_head.0 == x + 1 && player_head.1 == y + 1 {
                 pg.push_str("I ");
                 continue;
@@ -51,8 +51,8 @@ fn show_pg(player_head: &(u8, u8), food: &(u8, u8)) {
     print!("{}\x1b[{}A", pg, H);
 }
 
-fn check_borders(player_head: &mut (u8, u8)) {
-    *player_head = match *player_head {
+fn check_borders(point: &mut (u8, u8)) {
+    *point = match *point {
         (0, x) => (W - 1, x),
         (x, 0) => (x, H - 1),
         (W, x) => (1, x),
@@ -67,8 +67,10 @@ fn main() {
 
     let mut player_head = (W / 2, H / 2);
     let mut r = Rng { seed: 42 };
+    let mut score: u16 = 0;
 
-    let food = (r.rand(), r.rand());
+    let mut food = (r.rand(), r.rand());
+    check_borders(&mut food);
 
     loop {
         match translate_key(wait_for_key(&stdin)) {
@@ -82,7 +84,13 @@ fn main() {
 
         check_borders(&mut player_head);
 
-        show_pg(&player_head, &food);
+        if player_head == food {
+            score += 1;
+            food = (r.rand(),r.rand());
+            check_borders(&mut food);
+        }
+
+        show_pg(&player_head, &food, &score);
     }
 
     c::remove_term(term);
