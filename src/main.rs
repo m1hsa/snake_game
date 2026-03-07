@@ -29,9 +29,14 @@ fn main() {
 
         if head == food {
             score += 1;
-            food = (r.rand(), r.rand());
-            check_borders(&mut food);
             body.insert(0, head);
+            loop {
+                food = (r.rand(), r.rand());
+                check_borders(&mut food);
+                if !body.contains(&food) {
+                    break;
+                }
+            }
         }
 
         show_pg(&head, &body, &food, &score);
