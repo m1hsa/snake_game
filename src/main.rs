@@ -10,23 +10,23 @@ fn main() {
     let mut score: u16 = 0;
     let mut quit = false;
 
-    let mut player_head = (W / 2, H / 2);
+    let mut head = (W / 2, H / 2);
     let mut food = (r.rand(), r.rand());
 
     check_borders(&mut food);
 
     while !quit {
-        handle_keyboard(&mut stdin, &mut quit, &mut player_head);
+        handle_keyboard(&mut stdin, &mut quit, &mut head);
 
-        check_borders(&mut player_head);
+        check_borders(&mut head);
 
-        if player_head == food {
+        if head == food {
             score += 1;
             food = (r.rand(), r.rand());
             check_borders(&mut food);
         }
 
-        show_pg(&player_head, &food, &score);
+        show_pg(&head, &food, &score);
     }
 
     c::remove_term(term);

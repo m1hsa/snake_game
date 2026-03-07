@@ -16,11 +16,11 @@ impl Rng {
     }
 }
 
-pub fn show_pg(player_head: &(u8, u8), food: &(u8, u8), score: &u16) {
+pub fn show_pg(head: &(u8, u8), food: &(u8, u8), score: &u16) {
     let mut pg = format!("score: {}\n", score);
     for y in 0..W - 1 {
         for x in 0..H - 1 {
-            if player_head.0 == x + 1 && player_head.1 == y + 1 {
+            if head.0 == x + 1 && head.1 == y + 1 {
                 pg.push_str("I ");
                 continue;
             }
@@ -45,20 +45,20 @@ pub fn check_borders(point: &mut (u8, u8)) {
     };
 }
 
-pub fn handle_keyboard(stdin: &mut io::Stdin, quit: &mut bool, player_head: &mut (u8, u8)) {
+pub fn handle_keyboard(stdin: &mut io::Stdin, quit: &mut bool, head: &mut (u8, u8)) {
     let mut buf = [0];
     let _ = stdin.read_exact(&mut buf);
 
     match buf[0] {
-        119 => player_head.1 -= 1, // 'w'
-        97 => player_head.0 -= 1,  // 'a'
-        115 => player_head.1 += 1, // 's'
-        100 => player_head.0 += 1, // 'd'
+        119 => head.1 -= 1, // 'w'
+        97 => head.0 -= 1,  // 'a'
+        115 => head.1 += 1, // 's'
+        100 => head.0 += 1, // 'd'
         // vim motions
-        104 => player_head.0 -= 1, // 'h'
-        106 => player_head.1 += 1, // 'j'
-        107 => player_head.1 -= 1, // 'k'
-        108 => player_head.0 += 1, // 'l'
+        104 => head.0 -= 1, // 'h'
+        106 => head.1 += 1, // 'j'
+        107 => head.1 -= 1, // 'k'
+        108 => head.0 += 1, // 'l'
         // quit
         113 => *quit = true, // 'q'
         _ => (),
