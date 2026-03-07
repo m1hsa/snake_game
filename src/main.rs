@@ -25,9 +25,7 @@ fn main() {
 
         check_borders(&mut head);
 
-        if check_game_over(&body, &head) {
-            break;
-        }
+        check_game_over(&body, &head, &mut quit);
 
         if head == food {
             score += 1;

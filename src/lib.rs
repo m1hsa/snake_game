@@ -71,11 +71,10 @@ pub fn handle_keyboard(stdin: &mut io::Stdin, quit: &mut bool, head: &mut (u8, u
     }
 }
 
-pub fn check_game_over(body: &Vec<(u8, u8)>, head: &(u8, u8)) -> bool {
+pub fn check_game_over(body: &Vec<(u8, u8)>, head: &(u8, u8), quit: &mut bool) {
     for i in body {
         if head == i {
-            return true
+            *quit = true;
         }
     }
-    false
 }
