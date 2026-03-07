@@ -19,20 +19,19 @@ impl Rng {
 pub fn show_pg(head: &(u8, u8), body: &Vec<(u8, u8)>, food: &(u8, u8), score: &u16) {
     let mut pg = format!("score: {}\n", score);
     for y in 0..W - 1 {
-        'x: for x in 0..H - 1 {
-            if head.0 == x + 1 && head.1 == y + 1 {
+        for x in 0..H - 1 {
+            let xy = (x + 1, y + 1);
+            if head == &xy {
                 pg.push_str("# ");
                 continue;
             }
-            if food.0 == x + 1 && food.1 == y + 1 {
+            if food == &xy {
                 pg.push_str("F ");
                 continue;
             }
-            for i in body {
-                if i.0 == x + 1 && i.1 == y + 1 {
-                    pg.push_str("o ");
-                    continue 'x;
-                }
+            if body.contains(&xy) {
+                pg.push_str("o ");
+                continue;
             }
             pg.push_str(". ");
         }
