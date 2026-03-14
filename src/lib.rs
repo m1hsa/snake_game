@@ -76,7 +76,7 @@ pub fn show_pg(head: &(u8, u8), body: &Vec<(u8, u8)>, food: &(u8, u8), score: &u
 
 /// checks position of `point`
 /// ```
-/// use snake_game::*;
+/// use snake_game_tui::*;
 ///
 /// let mut point = (0, 10); /// x = 0 is out of bounds
 /// check_borders(&mut point);

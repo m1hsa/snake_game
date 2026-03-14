@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "snake_game"
+name = "snake_game_tui"
 version = "0.1.0"

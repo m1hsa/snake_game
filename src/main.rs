@@ -1,4 +1,4 @@
-use snake_game::*;
+use snake_game_tui::*;
 use std::io;
 mod c;
 
