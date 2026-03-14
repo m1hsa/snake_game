@@ -13,7 +13,7 @@ fn main() {
     let mut head = (W / 2, H / 2);
     let mut food = (r.rand(), r.rand());
 
-    let mut body: Vec<(u8, u8)> = vec![(0, 0)];
+    let mut body: Vec<(u8, u8)> = vec![(W / 2, H / 2 + 2), (W / 2, H / 2 + 1)];
 
     check_borders(&mut food);
 
@@ -21,7 +21,7 @@ fn main() {
         body.push(head);
         body.remove(0);
 
-        handle_keyboard(&mut stdin, &mut quit, &mut head);
+        handle_keyboard(&mut stdin, &mut quit, &mut head, &body);
 
         check_borders(&mut head);
 

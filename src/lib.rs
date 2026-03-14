@@ -95,27 +95,60 @@ pub fn check_borders(point: &mut (u8, u8)) {
         (x, y) => (x, y),
     };
 }
+/// gets some kind of direction
+/// TODO SHOULD REFACTOR
+fn get_direction(body: &Vec<(u8, u8)>, head: &(u8, u8)) -> (i8, i8) {
+    let neck = body
+        .get(body.len() - 2)
+        .expect("body should have pre last element");
+    let mut d = (head.0 as i8 - neck.0 as i8, head.1 as i8 - neck.1 as i8); // TODO make something with this
+    // crazy hack but actual fix
+    if d.0 > 1 {
+        d.0 = -1
+    }
+    if d.1 > 1 {
+        d.1 = -1
+    }
+    if d.0 < -1 {
+        d.0 = 1
+    }
+    if d.1 < -1 {
+        d.1 = 1
+    }
+    d
+}
 
 /// handles keyboard.
-/// BUG, if pressed something else than wasdhjkl aborts game
-pub fn handle_keyboard(stdin: &mut io::Stdin, quit: &mut bool, head: &mut (u8, u8)) {
+pub fn handle_keyboard(
+    stdin: &mut io::Stdin,
+    quit: &mut bool,
+    head: &mut (u8, u8),
+    body: &Vec<(u8, u8)>,
+) {
     let mut buf = [0];
     let _ = stdin.read_exact(&mut buf);
 
-    match buf[0] {
-        119 => head.1 -= 1, // 'w'
-        97 => head.0 -= 1,  // 'a'
-        115 => head.1 += 1, // 's'
-        100 => head.0 += 1, // 'd'
+    let direction = match buf[0] {
+        119 => (0, -1), // 'w'
+        97 => (-1, 0),  // 'a'
+        115 => (0, 1),  // 's'
+        100 => (1, 0),  // 'd'
         // vim motions
-        104 => head.0 -= 1, // 'h'
-        106 => head.1 += 1, // 'j'
-        107 => head.1 -= 1, // 'k'
-        108 => head.0 += 1, // 'l'
+        104 => (-1, 0), // 'h'
+        106 => (0, 1),  // 'j'
+        107 => (0, -1), // 'k'
+        108 => (1, 0),  // 'l'
         // quit
-        113 => *quit = true, // 'q'
-        _ => (),
-    }
+        113 => {
+            // 'q'
+            *quit = true;
+            (0, 0)
+        }
+        _ => get_direction(body, head),
+    };
+    // TODO make something with this
+    head.0 = (head.0 as i8 + direction.0) as u8;
+    head.1 = (head.1 as i8 + direction.1) as u8;
 }
 
 /// checks if head is in the any part the body
