@@ -1,21 +1,55 @@
+//! # snake_game
+//! this is library for game binary, this library do many things for this game
+
 use std::io::{self, Read};
 
+/// hardcoded width of the game field, player can go maximum of W-1 positions
 pub const W: u8 = 20;
+/// hardcoded height of the game field, player can go maximum of H-1 positions
 pub const H: u8 = 20;
 
+/// struct for implementation of LCG algoritm
 pub struct Rng {
     seed: u64,
 }
 impl Rng {
+    /// Generates new `Rng` struct
     pub fn new(seed: u64) -> Self {
         Self { seed }
     }
+    /// Returns random u8 number using linear congruential generator
     pub fn rand(&mut self) -> u8 {
         self.seed = self.seed.wrapping_mul(6364136223846793005).wrapping_add(1);
         (self.seed % W as u64) as u8 + 1
     }
 }
 
+/// # Draws main tui screen
+/// - as arguments it needs positions of various things
+/// ## draws something like this:
+///
+/// ```text
+/// score: 13
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . o o o o . . . . . . . . . . .
+/// . . . . o . . o . . . . . . . . . . .
+/// . . . . o . . o . . . . . . . . . . .
+/// . . . . o . . o o . . . . . . . . . .
+/// . . . . o . . . . . . . . . . . . . .
+/// . . . . o o . . . . . . . . . . . . .
+/// . . . . . # . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . F . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// . . . . . . . . . . . . . . . . . . .
+/// ```
 pub fn show_pg(head: &(u8, u8), body: &Vec<(u8, u8)>, food: &(u8, u8), score: &u16) {
     let mut pg = format!("score: {}\n", score);
     for y in 0..W - 1 {
@@ -40,6 +74,18 @@ pub fn show_pg(head: &(u8, u8), body: &Vec<(u8, u8)>, food: &(u8, u8), score: &u
     print!("{}\x1b[{}A", pg, H);
 }
 
+/// checks position of `point`
+/// ```
+/// use snake_game::*;
+///
+/// let mut point = (0, 10); /// x = 0 is out of bounds
+/// check_borders(&mut point);
+/// assert_eq!(point, (W-1,10));
+///
+/// let mut point2 = (10, H); /// y = H is out of bounds
+/// check_borders(&mut point2);
+/// assert_eq!(point2, (10,1));
+/// ```
 pub fn check_borders(point: &mut (u8, u8)) {
     *point = match *point {
         (0, x) => (W - 1, x),
@@ -50,6 +96,8 @@ pub fn check_borders(point: &mut (u8, u8)) {
     };
 }
 
+/// handles keyboard.
+/// BUG, if pressed something else than wasdhjkl aborts game
 pub fn handle_keyboard(stdin: &mut io::Stdin, quit: &mut bool, head: &mut (u8, u8)) {
     let mut buf = [0];
     let _ = stdin.read_exact(&mut buf);
@@ -70,6 +118,8 @@ pub fn handle_keyboard(stdin: &mut io::Stdin, quit: &mut bool, head: &mut (u8, u
     }
 }
 
+/// checks if head is in the any part the body
+/// if so aborts game
 pub fn check_game_over(body: &Vec<(u8, u8)>, head: &(u8, u8), quit: &mut bool) {
     for i in body {
         if head == i {
