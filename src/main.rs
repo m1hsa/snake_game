@@ -18,6 +18,8 @@ fn main() {
     check_borders(&mut food);
 
     while !quit {
+        show_pg(&head, &body, &food, &score);
+
         body.push(head);
         body.remove(0);
 
@@ -38,8 +40,6 @@ fn main() {
                 }
             }
         }
-
-        show_pg(&head, &body, &food, &score);
     }
 
     println!("Game over! Score: {}", score);
