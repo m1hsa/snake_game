@@ -97,11 +97,8 @@ pub fn check_borders(point: &mut (u8, u8)) {
 }
 /// gets some kind of direction
 /// TODO SHOULD REFACTOR
-fn get_direction(body: &Vec<(u8, u8)>, head: &(u8, u8)) -> (i8, i8) {
-    let neck = body
-        .get(body.len() - 2)
-        .expect("body should have pre last element");
-    let mut d = (head.0 as i8 - neck.0 as i8, head.1 as i8 - neck.1 as i8); // TODO make something with this
+fn get_direction(a: &(u8, u8), b: &(u8, u8)) -> (i8, i8) {
+    let mut d = (b.0 as i8 - a.0 as i8, b.1 as i8 - a.1 as i8);
     // crazy hack but actual fix
     if d.0 > 1 {
         d.0 = -1
@@ -128,7 +125,9 @@ pub fn handle_keyboard(
     let mut buf = [0];
     let _ = stdin.read_exact(&mut buf);
 
-    let direction = match buf[0] {
+    let prelast = &body[body.len() - 2];
+
+    let mut direction = match buf[0] {
         119 => (0, -1), // 'w'
         97 => (-1, 0),  // 'a'
         115 => (0, 1),  // 's'
@@ -144,8 +143,14 @@ pub fn handle_keyboard(
             *quit = true;
             (0, 0)
         }
-        _ => get_direction(body, head),
+        _ => get_direction(prelast, head),
     };
+
+    // to not go into yourself
+    if direction == get_direction(head, prelast) {
+        direction = (-direction.0, -direction.1);
+    }
+
     // TODO make something with this
     head.0 = (head.0 as i8 + direction.0) as u8;
     head.1 = (head.1 as i8 + direction.1) as u8;
